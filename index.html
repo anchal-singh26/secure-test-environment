@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Secure Test Environment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="start-screen">
+  <div class="start-card">
+    <div class="start-icon">🔒</div>
+    <h1>Secure Assessment</h1>
+    <p class="start-desc">
+      This is a monitored assessment environment.  
+      Fullscreen mode, focus tracking, and activity logging are enforced.
+    </p>
+
+    <ul class="start-rules">
+      <li>Chrome browser only</li>
+      <li>No tab switching</li>
+      <li>No copy / paste</li>
+      <li>Fullscreen required</li>
+    </ul>
+
+    <button id="startBtn" class="start-btn">
+      Start Assessment
+    </button>
+
+    <p class="start-hint">
+      Click start when you are ready. Timer will begin immediately.
+    </p>
+  </div>
+</div>
+
+
+<div id="app" style="display:none;">
+  <div id="timer">5:00</div>
+
+  <div class="assessment-container">
+    <h1 class="assessment-title">Assessment In Progress</h1>
+
+    <p class="assessment-subtitle">
+      Please remain focused. All actions are monitored and recorded.
+    </p>
+
+    <div class="assessment-info">
+      <div class="info-card">
+        <span class="info-icon">🖥️</span>
+        <span>Fullscreen Enforced</span>
+      </div>
+
+      <div class="info-card">
+        <span class="info-icon">👁️</span>
+        <span>Focus Tracking Enabled</span>
+      </div>
+
+      <div class="info-card">
+        <span class="info-icon">📋</span>
+        <span>Copy / Paste Disabled</span>
+      </div>
+
+      <div class="info-card">
+        <span class="info-icon">⏱️</span>
+        <span>Timed Session</span>
+      </div>
+    </div>
+
+    <div class="assessment-note">
+      Do not refresh, switch tabs, or exit fullscreen during the assessment.
+    </div>
+  </div>
+</div>
+
+
+  <script type="module" src="main.js"></script>
+</body>
+
+</html>
