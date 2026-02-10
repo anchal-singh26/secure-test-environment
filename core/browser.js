@@ -4,7 +4,11 @@ function detectBrowser() {
   const ua = navigator.userAgent;
   const vendor = navigator.vendor || "";
 
-  const isRealChrome =
+  const isMobile =
+    /Android|iPhone|iPad|iPod|SamsungBrowser/i.test(ua);
+
+  const isDesktopChrome =
+    !isMobile &&
     /Chrome\/\d+/.test(ua) &&
     vendor === "Google Inc." &&
     !/Edg|OPR|Brave|Chromium/i.test(ua);
@@ -12,9 +16,11 @@ function detectBrowser() {
   let name = "Unknown";
   let version = "Unknown";
 
-  if (isRealChrome) {
+  if (isMobile) {
+    name = "Mobile Browser";
+  } else if (isDesktopChrome) {
     name = "Google Chrome";
-    version = ua.match(/Chrome\/(\d+\.\d+\.\d+\.\d+)/)?.[1] || "Unknown";
+    version = ua.match(/Chrome\/(\S+)/)?.[1] || "Unknown";
   } else if (/Edg\//.test(ua)) {
     name = "Microsoft Edge";
     version = ua.match(/Edg\/(\S+)/)?.[1] || "Unknown";
@@ -24,14 +30,12 @@ function detectBrowser() {
   } else if (/Firefox\//.test(ua)) {
     name = "Mozilla Firefox";
     version = ua.match(/Firefox\/(\S+)/)?.[1] || "Unknown";
-  } else if (/Brave/i.test(ua) || vendor.includes("Brave")) {
-    name = "Brave Browser";
   } else if (/Safari\//.test(ua)) {
     name = "Safari";
     version = ua.match(/Version\/(\S+)/)?.[1] || "Unknown";
   }
 
-  return { name, version, isAllowed: isRealChrome };
+  return { name, version, isAllowed: isDesktopChrome };
 }
 
 export function enforceBrowser() {
@@ -44,7 +48,7 @@ export function enforceBrowser() {
 
   if (!isAllowed) {
     logEvent("ACCESS_BLOCKED", {
-      reason: "Only Google Chrome is allowed"
+      reason: "Only desktop Google Chrome is allowed"
     });
 
     blockAccess(name, version);
@@ -61,14 +65,14 @@ function blockAccess(name, version) {
         <div class="block-icon">🚫</div>
         <h1>Access Restricted</h1>
         <p class="block-desc">
-          This assessment is strictly restricted to
-          <strong>Google Chrome</strong>.
+          This assessment can only be taken on
+          <strong>Desktop Google Chrome</strong>.
         </p>
         <p class="block-meta">
-          Detected browser: ${name} ${version}
+          Detected environment: ${name} ${version}
         </p>
         <p class="block-hint">
-          Please reopen this link using Google Chrome only.
+          Please reopen this link on a desktop system using Google Chrome.
         </p>
       </div>
     </div>
