@@ -7,20 +7,22 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
 <div id="start-screen">
   <div class="start-card">
     <div class="start-icon">🔒</div>
     <h1>Secure Assessment</h1>
+
     <p class="start-desc">
-      This is a monitored assessment environment.  
+      This is a monitored assessment environment.
       Fullscreen mode, focus tracking, and activity logging are enforced.
     </p>
 
     <ul class="start-rules">
-      <li>Chrome browser only !</li>
-      <li>No tab switching !</li>
-      <li>No copy / paste !</li>
-      <li>Fullscreen required !</li>
+      <li>Chrome browser only</li>
+      <li>No tab switching</li>
+      <li>No copy / paste</li>
+      <li>Fullscreen required</li>
     </ul>
 
     <button id="startBtn" class="start-btn">
@@ -28,11 +30,10 @@
     </button>
 
     <p class="start-hint">
-      Click start when you are ready. Timer will begin immediately.
+      Click start when you are ready. The timer will begin immediately.
     </p>
   </div>
 </div>
-
 
 <div id="app" style="display:none;">
   <div id="timer">5:00</div>
@@ -44,36 +45,39 @@
       Please remain focused. All actions are monitored and recorded.
     </p>
 
-    <div class="assessment-info">
-      <div class="info-card">
-        <span class="info-icon">🖥️</span>
-        <span>Fullscreen Enforced</span>
-      </div>
+    <div class="mock-test">
+      <h2 class="mock-title">Mock Test Question</h2>
 
-      <div class="info-card">
-        <span class="info-icon">👁️</span>
-        <span>Focus Tracking Enabled</span>
-      </div>
+      <p class="mock-instruction">
+        Type your answer below. Copy, paste, right-click, tab switching,
+        and developer tools usage are monitored.
+      </p>
 
-      <div class="info-card">
-        <span class="info-icon">📋</span>
-        <span>Copy / Paste Disabled</span>
-      </div>
+      <label for="answerBox" class="mock-label">
+        Your Answer
+      </label>
 
-      <div class="info-card">
-        <span class="info-icon">⏱️</span>
-        <span>Timed Session</span>
-      </div>
+      <textarea
+        id="answerBox"
+        class="mock-textarea"
+        placeholder="Type your answer here..."
+        autocomplete="off"
+        spellcheck="false"
+      ></textarea>
+
+      <p class="mock-hint">
+        Do not refresh, switch tabs, or exit fullscreen during the assessment.
+      </p>
     </div>
+    <div class="audit-panel">
+  <h3 class="audit-title">Audit Log </h3>
 
-    <div class="assessment-note">
-      Do not refresh, switch tabs, or exit fullscreen during the assessment.
-    </div>
+<div id="auditLogs" class="audit-panel"></div>
+</div>
+
   </div>
 </div>
 
-
-  <script type="module" src="main.js"></script>
+<script type="module" src="main.js"></script>
 </body>
-
 </html>
