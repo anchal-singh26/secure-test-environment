@@ -6,6 +6,16 @@ const LOCK_KEY = "SECURE_TEST_LOCKED";
 const MAX_BATCH_SIZE = 10;
 const EVENT_QUEUE = [];
 
+const subscribers = [];
+
+export function subscribeToLogs(fn) {
+  subscribers.push(fn);
+}
+
+function notifySubscribers(event) {
+  subscribers.forEach(fn => fn(event));
+}
+
 function isLocked() {
   return localStorage.getItem(LOCK_KEY) === "true";
 }
@@ -20,8 +30,6 @@ function getStoredLogs() {
 }
 
 function persistLogs(event) {
-  if (isLocked()) return;
-
   const existing = getStoredLogs();
   existing.push(event);
   localStorage.setItem(LOG_KEY, JSON.stringify(existing));
@@ -40,6 +48,7 @@ export function logEvent(eventType, metadata = {}) {
 
   EVENT_QUEUE.push(event);
   persistLogs(event);
+  notifySubscribers(event);
 
   if (EVENT_QUEUE.length >= MAX_BATCH_SIZE) {
     flushLogs();
@@ -47,21 +56,5 @@ export function logEvent(eventType, metadata = {}) {
 }
 
 function flushLogs() {
-  const logs = [...EVENT_QUEUE];
   EVENT_QUEUE.length = 0;
-
-  try {
-    fetch("/log-endpoint", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(logs),
-      keepalive: true
-    });
-  } catch {
-    EVENT_QUEUE.unshift(...logs);
-    persistLogs();
-  }
 }
-
