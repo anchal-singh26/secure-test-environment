@@ -44,25 +44,27 @@ function endAssessment() {
   clearInterval(timerInterval);
   clearTimerState();
 
-  logEvent("TIMER_EXPIRED", { remainingSeconds: 0 });
-  lockLogs();
+logEvent("TIMER_EXPIRED", { remainingSeconds: 0 });
 
-document.body.innerHTML = `
-  <div class="blocked-screen">
-    <div class="end-card">
-      <div class="end-icon">⏱️</div>
-      <h1>Assessment Completed</h1>
-      <p>
-        Your allotted time has expired.
-        All activity has been securely recorded.
-      </p>
-      <p class="end-note">
-        You may now safely close this window.
-      </p>
-    </div>
+setTimeout(() => {
+  lockLogs();  
+}, 100);
+
+
+  const app = document.getElementById("app");
+
+app.innerHTML = `
+  <div class="end-card">
+    <div class="end-icon">⏱️</div>
+    <h1>Assessment Completed</h1>
+    <p>Time expired. Review the audit log below.</p>
   </div>
-`;
 
+  <div id="auditLogs"></div>
+`;
+import("../controls/auditViewer.js").then(m => {
+  m.initAuditViewer(); 
+});
 }
 
 export function initTimer(seconds = 300) {
@@ -82,9 +84,11 @@ export function initTimer(seconds = 300) {
     saveTimerState();
     updateTimerUI();
 
-    logEvent("TIMER_TICK", {
-      remainingSeconds
-    });
+    if (remainingSeconds % 60 === 0 || remainingSeconds <= 10) {
+      logEvent("TIMER_UPDATE", {
+        remainingSeconds
+      });
+    }
 
     if (remainingSeconds === 60) {
       logEvent("TIMER_WARNING", { message: "1 minute remaining" });
