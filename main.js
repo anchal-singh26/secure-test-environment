@@ -3,6 +3,7 @@ import { initFocusTracking } from "./controls/focus.js";
 import { initFullscreenEnforcement, requestFullscreen } from "./controls/fullscreen.js";
 import { initTimer } from "./controls/timer.js";
 import { initClipboardProtection } from "./controls/clipboard.js";
+import { initAuditViewer } from "./controls/auditViewer.js";
 
 (function init() {
   enforceBrowser();
@@ -16,6 +17,8 @@ import { initClipboardProtection } from "./controls/clipboard.js";
     requestFullscreen();
     document.getElementById("start-screen").remove();
     document.getElementById("app").style.display = "block";
+    initAuditViewer();
     initTimer(300);
+
   });
 })();
