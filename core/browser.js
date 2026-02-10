@@ -1,79 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Secure Test Environment</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-<div id="start-screen">
-  <div class="start-card">
-    <div class="start-icon">🔒</div>
-    <h1>Secure Assessment</h1>
-    <p class="start-desc">
-      This is a monitored assessment environment.  
-      Fullscreen mode, focus tracking, and activity logging are enforced.
-    </p>
+import { logEvent } from "./logger.js";
 
-    <ul class="start-rules">
-      <li>Chrome browser only</li>
-      <li>No tab switching</li>
-      <li>No copy / paste</li>
-      <li>Fullscreen required</li>
-    </ul>
+function detectBrowser() {
+  const ua = navigator.userAgent;
+  const vendor = navigator.vendor || "";
 
-    <button id="startBtn" class="start-btn">
-      Start Assessment
-    </button>
+  const isRealChrome =
+    /Chrome\/\d+/.test(ua) &&
+    vendor === "Google Inc." &&
+    !/Edg|OPR|Brave|Chromium/i.test(ua);
 
-    <p class="start-hint">
-      Click start when you are ready. Timer will begin immediately.
-    </p>
-  </div>
-</div>
+  let name = "Unknown";
+  let version = "Unknown";
 
+  if (isRealChrome) {
+    name = "Google Chrome";
+    version = ua.match(/Chrome\/(\d+\.\d+\.\d+\.\d+)/)?.[1] || "Unknown";
+  } else if (/Edg\//.test(ua)) {
+    name = "Microsoft Edge";
+    version = ua.match(/Edg\/(\S+)/)?.[1] || "Unknown";
+  } else if (/OPR\//.test(ua)) {
+    name = "Opera";
+    version = ua.match(/OPR\/(\S+)/)?.[1] || "Unknown";
+  } else if (/Firefox\//.test(ua)) {
+    name = "Mozilla Firefox";
+    version = ua.match(/Firefox\/(\S+)/)?.[1] || "Unknown";
+  } else if (/Brave/i.test(ua) || vendor.includes("Brave")) {
+    name = "Brave Browser";
+  } else if (/Safari\//.test(ua)) {
+    name = "Safari";
+    version = ua.match(/Version\/(\S+)/)?.[1] || "Unknown";
+  }
 
-<div id="app" style="display:none;">
-  <div id="timer">5:00</div>
+  return { name, version, isAllowed: isRealChrome };
+}
 
-  <div class="assessment-container">
-    <h1 class="assessment-title">Assessment In Progress</h1>
+export function enforceBrowser() {
+  const { name, version, isAllowed } = detectBrowser();
 
-    <p class="assessment-subtitle">
-      Please remain focused. All actions are monitored and recorded.
-    </p>
+  logEvent("BROWSER_DETECTED", {
+    browserName: name,
+    browserVersion: version
+  });
 
-    <div class="assessment-info">
-      <div class="info-card">
-        <span class="info-icon">🖥️</span>
-        <span>Fullscreen Enforced</span>
-      </div>
+  if (!isAllowed) {
+    logEvent("ACCESS_BLOCKED", {
+      reason: "Only Google Chrome is allowed"
+    });
 
-      <div class="info-card">
-        <span class="info-icon">👁️</span>
-        <span>Focus Tracking Enabled</span>
-      </div>
+    blockAccess(name, version);
+    return;
+  }
 
-      <div class="info-card">
-        <span class="info-icon">📋</span>
-        <span>Copy / Paste Disabled</span>
-      </div>
+  logEvent("BROWSER_ALLOWED", {});
+}
 
-      <div class="info-card">
-        <span class="info-icon">⏱️</span>
-        <span>Timed Session</span>
+function blockAccess(name, version) {
+  document.body.innerHTML = `
+    <div class="blocked-screen">
+      <div class="block-card">
+        <div class="block-icon">🚫</div>
+        <h1>Access Restricted</h1>
+        <p class="block-desc">
+          This assessment is strictly restricted to
+          <strong>Google Chrome</strong>.
+        </p>
+        <p class="block-meta">
+          Detected browser: ${name} ${version}
+        </p>
+        <p class="block-hint">
+          Please reopen this link using Google Chrome only.
+        </p>
       </div>
     </div>
-
-    <div class="assessment-note">
-      Do not refresh, switch tabs, or exit fullscreen during the assessment.
-    </div>
-  </div>
-</div>
-
-
-  <script type="module" src="main.js"></script>
-</body>
-
-</html>
+  `;
+}
